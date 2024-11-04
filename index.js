@@ -1,25 +1,31 @@
-
-const cursos=[
-    {id:1, curso: "Noviazgo y sexualidad", precio: "1,500"},
-    {id:2, curso: "Inteligencia emocional", precio: "1,500"},
-    {id:3, curso: "Mi yo social", precio: "1,500"},
-    {id:4, curso: "Administración del tiempod", precio: "1,500"},
-    {id:5, curso: "Finanzas sanas", precio: "1,500"},
-    {id:6, curso: "El costo de tener la razón", precio: "1,500"},
+const cursos = [
+	{ id: 1, cruso: "noviazgo y sexualidad", precio: "1500.00" },
+	{ id: 2, cruso: "inteligencia emocional", precio: "1500.00" },
+	{ id: 3, cruso: "mi yo social", precio: "1500.00" },
+	{ id: 4, cruso: "administracion del tiempo", precio: "1500.00" },
+	{ id: 5, cruso: "la magia del dinero", precio: "1500.00" },
+	{ id: 6, cruso: "el costo de tener la razon", precio: "1500.00" },
 ];
+
 
 let flag_fin = true;
 let total = 0.0;
 let showCursos = "";
 let cantidad = 0;
-let carrito =[];
+let showPromocion = "No tienes promocion \n";
+
 
 for (p in cursos) {
-    showCursos =
-        showCursos + `${cursos[p].id}. ${cursos[p].curso} = $ ${cursos[p].precio} \n`;
+	showCursos =
+		showCursos +
+		`${cursos[p].id}. ${cursos[p].cruso} = $ ${cursos[p].precio} \n`;
 }
 
+
 function init() {
+	let carrito = [];
+	let validarPromocion;
+	
 	while (flag_fin) {
 		let id = parseInt(
 			prompt(
@@ -34,57 +40,71 @@ function init() {
 			cantidad += 1;
 			carrito.push(cursoSeleccionado);
 
-			let validarPromocion = calcularPromocion(cantidad, carrito);
+			validarPromocion = calcularPromocion(cantidad, carrito);
+
+			console.log(JSON.stringify(validarPromocion));
 
 			if (validarPromocion.promocion) {
-				alert("Tu carrito tiene promoción");
+				showPromocion = "Tienes promocion \n";
 			}
+			
 		} else {
-			console.log("El id del curso seleccionado no existe");
+			alert("El id del curso seleccionado no existe");
 		}
-
 		flag_fin = confirm("¿Deseas adquirir otro curso?");
+		
 	}
+
+	alert(showPromocion + "Cantidad de cursos: " + cantidad + "\n" + "Tu total es: $ " + validarPromocion.total);
+	
 }
 
-function calcularPromocion(cantidad, carrito) {
-	console.log("carrito", carrito);
-	console.log("cantidad", cantidad);
+function calcularPromocion(q, c) {
+	console.log("carrito", c);
+	console.log("cantidad", q);
 
-	let total = 0.0;
-	let nuevoCarrito = carrito;
+	let total = 0;
+	let nuevoCarrito = [];
+
+	for (l in c) {
+		nuevoCarrito.push(c[l]);
+	}
+
 	let tienePromocion = false;
 	let resultado = {};
 
-	if (cantidad >= 3) {
+	if (q >= 3) {
 		tienePromocion = true;
-		nuevoCarrito.reduce((a, b) => a + b.precio, 0);
-		console.log(nuevoCarrito);
+		for (l in nuevoCarrito) {
+			nuevoCarrito[l].precio = 1200.00;
+		}
+		console.log(JSON.stringify(nuevoCarrito));
 	}
 
 	if (tienePromocion) {
 		resultado["promocion"] = true;
-		
-		console.log(total);
+		for (l in nuevoCarrito) {
+			total = total + parseFloat(nuevoCarrito[l].precio);
+		}
+		resultado["total"] = total;
 	} else {
 		resultado["promocion"] = false;
-		total = nuevoCarrito.map((x) => x.precio).reduce((a, b) => parseFloat(a) + parseFloat(b));
-		console.log(total);
+		for (l in nuevoCarrito) {			
+			total = total + parseFloat(nuevoCarrito[l].precio);
+		}
+		resultado["total"] = total;
 	}
 
 	return resultado;
 }
+
 
 function buscarCurso(id) {
 	let detalleCurso = {};
 
 	for (p in cursos) {
 		if (id == cursos[p].id) {
-			detalleCurso = {
-				id: id,
-				cruso: cursos[p].cruso,
-				precio: cursos[p].precio,
-			};
+			detalleCurso = cursos[p];
 		}
 	}
 
